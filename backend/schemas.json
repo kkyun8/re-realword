@@ -1,0 +1,55 @@
+{
+  "User": {
+    "type": "object",
+    "properties": {
+      "user": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "ユーザーのメールアドレス"
+          },
+          "token": {
+            "type": "string",
+            "description": "jwt token"
+          },
+          "username": {
+            "type": "string",
+            "description": "ユーザー名"
+          },
+          "bio": {
+            "type": "string",
+            "description": "ユーザーの自己紹介"
+          },
+          "image": {
+            "type": "string",
+            "description": "ユーザーのアイコン画像"
+          }
+        }
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "username": {
+            "type": "string",
+            "description": "ユーザー名"
+          },
+          "bio": {
+            "type": "string",
+            "description": "ユーザーの自己紹介"
+          },
+          "image": {
+            "type": "string",
+            "description": "ユーザーのアイコン画像"
+          },
+          "following": {
+            "type": "boolean",
+            "description": "フォローしているかどうか"
+          }
+        }
+      }
+    }
+  }
+}
