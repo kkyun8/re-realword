@@ -1,12 +1,7 @@
 <template>
   <div id="app">
     <Layout>
-      <p>Home</p>
-      <p>Login/Register</p>
-      <p>Profile</p>
-      <p>Settings</p>
-      <p>Create/Edit Article</p>
-      <p>Article</p>
+      <router-view />
     </Layout>
   </div>
 </template>
