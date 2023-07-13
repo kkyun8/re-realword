@@ -3,8 +3,9 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const cors = require("cors");
 
-const usersRouter = require("./routes/users");
+const usersRouter = require("./src/routes/users.route");
 
 const app = express();
 
@@ -14,13 +15,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
 
 app.use("/api/users", usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+//swagger
+const swaggerUi = require("swagger-ui-express");
+const swaggerJSDoc = require("swagger-jsdoc");
+
+const options = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "RE-REALWORD API",
+      version: "1.0.0",
+    },
+    basePath: "/api",
+    consumes: ["application/json"],
+    components: {
+      schemas: require("./schemas.json"),
+    },
+  },
+  apis: ["./src/routes/*"],
+};
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -30,7 +48,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.send(err.message);
 });
 
 module.exports = app;

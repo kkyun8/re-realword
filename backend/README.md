@@ -11,5 +11,13 @@ $ npm install
 # DB migrate
 $ npx prisma migrate dev --name init
 # サーバ起動
+$ npm start
+OR
 $ DEBUG=backend:* npm start
+OR
+$ npm devstart
 ```
+
+### swagger url
+
+http://localhost:3000/api-docs
