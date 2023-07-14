@@ -1,3 +1,4 @@
+const { authorization } = require("../middleware/auth");
 const userService = require("../services/users.service");
 
 async function login(req, res, next) {
@@ -34,7 +35,44 @@ async function create(req, res, next) {
   }
 }
 
+async function get(req, res, next) {
+  try {
+    const { id } = authorization(req);
+
+    // Authentication required, returns a User that's the current user
+    const user = await userService.get(id);
+    res.json({ user });
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
+
+async function update(req, res, next) {
+  const { email, username, password, image, bio } = req.body.user;
+  try {
+    const { id } = authorization(req);
+
+    // Authentication required, returns the User
+    // Accepted fields: email, username, password, image, bio
+    const user = await userService.update(
+      id,
+      email,
+      username,
+      password,
+      image,
+      bio
+    );
+    res.json({ user });
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
+
 module.exports = {
   login,
   create,
+  get,
+  update,
 };

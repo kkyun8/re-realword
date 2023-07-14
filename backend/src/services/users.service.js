@@ -53,7 +53,55 @@ async function create(email, username, password) {
   return { email, token, username, bio, image };
 }
 
+async function get(id) {
+  const user = await prisma.user
+    .findUnique({
+      where: {
+        id,
+      },
+    })
+    .catch((e) => {
+      throw new Error(e.message);
+    });
+
+  const { email, username, bio, image } = user;
+  return { email, username, bio, image };
+}
+
+async function update(id, email, username, password, image, bio) {
+  const data = Object.fromEntries(
+    Object.entries({
+      email,
+      username,
+      password,
+      image,
+      bio,
+    }).filter(([key, value]) => value !== undefined)
+  );
+
+  if (data.password) {
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(password, salt);
+    data.password = hash;
+  }
+
+  const user = await prisma.user
+    .update({
+      where: {
+        id,
+      },
+      data,
+    })
+    .catch((e) => {
+      throw new Error(e.message);
+    });
+
+  return { email, username, bio, image };
+}
+
 module.exports = {
   login,
   create,
+  get,
+  update,
 };

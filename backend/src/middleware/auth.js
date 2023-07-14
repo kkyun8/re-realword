@@ -1,20 +1,25 @@
 const jwt = require("jsonwebtoken");
 const tokenKey = process.env.TOKEN_KEY || "secret";
 
-// TODO: error handling
-function authorization(req, res, next) {
-  const token = req.header("Authorization");
-  if (!token) {
-    return "No token, authorization denied";
+function authorization(req) {
+  const auth = req.header("Authorization");
+  if (!auth) {
+    throw new Error("No token, authorization denied");
+  } else {
+    const [type, token] = auth.split(" ");
+    if (type !== "Token") {
+      throw new Error("Invalid token type");
+    }
+
+    try {
+      const decoded = jwt.verify(token, tokenKey);
+      const { id, email } = decoded.user;
+
+      return { id, email };
+    } catch (e) {
+      throw new Error(e.message);
+    }
   }
-  let msg = "";
-  try {
-    const decoded = jwt.verify(token, tokenKey);
-    req.user = decoded;
-  } catch (e) {
-    msg = "Token is not valid";
-  }
-  return msg;
 }
 
 function createToken(user) {
