@@ -1,9 +1,9 @@
 const express = require("express");
+const { body, header } = require("express-validator");
 const router = express.Router();
 const userController = require("../controllers/users.controller");
 
-// TODO: error code
-
+// TODO: /api/users/login 401 Unauthorizedが発生するケースは？
 /**
  * @openapi
  * components:
@@ -36,10 +36,26 @@ const userController = require("../controllers/users.controller");
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       500:
+ *       422:
  *         description: NG
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.post("/login", userController.login);
+router.post(
+  "/login",
+  [
+    body("user").isObject(),
+    body("user.email").if(body("user").exists()).isEmail().trim(),
+    body("user.password")
+      .if(body("user").exists())
+      .notEmpty()
+      .isString()
+      .trim(),
+  ],
+  userController.login
+);
 
 /**
  * @openapi
@@ -63,16 +79,37 @@ router.post("/login", userController.login);
  *                   password:
  *                     type: string
  *     responses:
- *       200:
+ *       201:
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       500:
+ *       422:
  *         description: NG
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.post("/", userController.create);
+router.post(
+  "/",
+  [
+    body("user").isObject(),
+    body("user.email").if(body("user").exists()).notEmpty().isEmail(),
+    body("user.username")
+      .if(body("user").exists())
+      .notEmpty()
+      .isString()
+      .trim(),
+    body("user.password")
+      .if(body("user").exists())
+      .notEmpty()
+      .isString()
+      .trim(),
+  ],
+  userController.create
+);
 
 /**
  * @openapi
@@ -90,8 +127,14 @@ router.post("/", userController.create);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       500:
+ *       401:
+ *         description: Unauthorized
+ *       422:
  *         description: NG
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/", userController.get);
 
@@ -129,9 +172,26 @@ router.get("/", userController.get);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       500:
+ *       401:
+ *         description: Unauthorized
+ *       422:
  *         description: NG
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.put("/", userController.update);
+router.put(
+  "/",
+  [
+    body("user").isObject(),
+    body("user.email").notEmpty().isEmail(),
+    body("user.username").notEmpty().isString().trim(),
+    body("user.password").notEmpty().isString().trim(),
+    body("user.image").isString().trim(),
+    body("user.bio").isString().trim(),
+  ],
+  userController.update
+);
 
 module.exports = router;

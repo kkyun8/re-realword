@@ -1,23 +1,26 @@
 const jwt = require("jsonwebtoken");
 const tokenKey = process.env.TOKEN_KEY || "secret";
 
+const Unauthorized = new Error("Unauthorized");
+Unauthorized.status = 401;
+
 function authorization(req) {
   const auth = req.header("Authorization");
   if (!auth) {
-    throw new Error("No token, authorization denied");
+    throw Unauthorized;
   } else {
     const [type, token] = auth.split(" ");
     if (type !== "Token") {
-      throw new Error("Invalid token type");
+      throw Unauthorized;
     }
 
     try {
       const decoded = jwt.verify(token, tokenKey);
       const { id, email } = decoded.user;
 
-      return { id, email };
+      return { id, email, token };
     } catch (e) {
-      throw new Error(e.message);
+      throw Unauthorized;
     }
   }
 }

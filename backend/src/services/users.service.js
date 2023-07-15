@@ -14,14 +14,18 @@ async function login(email, password) {
   if (user) {
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      throw new Error("password is incorrect");
+      const error = new Error("password is incorrect");
+      error.status = 422;
+      throw error;
     }
     const { email, username, bio, image } = user;
     const token = createToken(user);
 
     return { email, token, username, bio, image };
   } else {
-    throw new Error("User not found");
+    const error = new Error("User not found");
+    error.status = 422;
+    throw error;
   }
 }
 
@@ -29,9 +33,11 @@ async function create(email, username, password) {
   const salt = await bcrypt.genSalt(saltRounds);
   const hash = await bcrypt.hash(password, salt);
 
-  const findUser = await prisma.user.findUniqueOrThrow({ where: { email } });
+  const findUser = await prisma.user.findUnique({ where: { email } });
   if (findUser) {
-    throw new Error("Email already exists");
+    const error = new Error("Email already exists");
+    error.status = 422;
+    throw error;
   }
 
   const user = await prisma.user
@@ -43,7 +49,9 @@ async function create(email, username, password) {
       },
     })
     .catch((e) => {
-      throw new Error(e.message);
+      const error = new Error(e.message);
+      error.status = 422;
+      throw error;
     });
 
   const bio = "";
@@ -53,7 +61,7 @@ async function create(email, username, password) {
   return { email, token, username, bio, image };
 }
 
-async function get(id) {
+async function get(id, token) {
   const user = await prisma.user
     .findUnique({
       where: {
@@ -61,14 +69,19 @@ async function get(id) {
       },
     })
     .catch((e) => {
-      throw new Error(e.message);
+      const error = new Error(e.message);
+      error.status = 422;
+      throw error;
     });
 
-  const { email, username, bio, image } = user;
-  return { email, username, bio, image };
+  let { email, username, bio, image } = user;
+  bio = bio || "";
+  image = image || "";
+
+  return { email, token, username, bio, image };
 }
 
-async function update(id, email, username, password, image, bio) {
+async function update(id, email, username, password, image, bio, token) {
   const data = Object.fromEntries(
     Object.entries({
       email,
@@ -93,10 +106,14 @@ async function update(id, email, username, password, image, bio) {
       data,
     })
     .catch((e) => {
-      throw new Error(e.message);
+      const error = new Error(e.message);
+      error.status = 422;
+      throw error;
     });
 
-  return { email, username, bio, image };
+  bio = bio || "";
+  image = image || "";
+  return { email, token, username, bio, image };
 }
 
 module.exports = {
