@@ -1,20 +1,28 @@
 const jwt = require("jsonwebtoken");
 const tokenKey = process.env.TOKEN_KEY || "secret";
 
-// TODO: error handling
-function authorization(req, res, next) {
-  const token = req.header("Authorization");
-  if (!token) {
-    return "No token, authorization denied";
+const Unauthorized = new Error("Unauthorized");
+Unauthorized.status = 401;
+
+function authorization(req) {
+  const auth = req.header("Authorization");
+  if (!auth) {
+    throw Unauthorized;
+  } else {
+    const [type, token] = auth.split(" ");
+    if (type !== "Token") {
+      throw Unauthorized;
+    }
+
+    try {
+      const decoded = jwt.verify(token, tokenKey);
+      const { id, email } = decoded.user;
+
+      return { id, email, token };
+    } catch (e) {
+      throw Unauthorized;
+    }
   }
-  let msg = "";
-  try {
-    const decoded = jwt.verify(token, tokenKey);
-    req.user = decoded;
-  } catch (e) {
-    msg = "Token is not valid";
-  }
-  return msg;
 }
 
 function createToken(user) {
