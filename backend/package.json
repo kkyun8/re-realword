@@ -6,8 +6,8 @@
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "db:clean": "npx prisma migrate reset",
+    "db:seed": "node ./prisma/seed.js",
     "test:unit": "jest --watchAll --verbose",
-    "clean:test:unit": "npm run db:clean -y && npm run test:unit",
     "test:coverage": "jest --coverage --verbose"
   },
   "dependencies": {

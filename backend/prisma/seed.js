@@ -1,3 +1,4 @@
+//node  prisma/seed.js
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
@@ -10,6 +11,18 @@ const userData = [
   },
 ];
 
+const tagData = [
+  {
+    name: "tag1",
+  },
+  {
+    name: "tag2",
+  },
+  {
+    name: "tag3",
+  },
+];
+
 async function main() {
   console.log(`Start seeding ...`);
   for (const u of userData) {
@@ -18,6 +31,14 @@ async function main() {
     });
     console.log(`Created user with id: ${user.id}`);
   }
+
+  for (const t of tagData) {
+    const tag = await prisma.tag.create({
+      data: t,
+    });
+    console.log(`Created tag with name: ${tag.name}`);
+  }
+
   console.log(`Seeding finished.`);
 }
 

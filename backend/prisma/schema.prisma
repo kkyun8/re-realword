@@ -15,3 +15,7 @@ model User {
   bio String?
   image String?
 }
+
+model Tag {
+  name String    @id @unique
+}
