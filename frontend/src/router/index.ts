@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Home from "../components/Home.vue";
+import Home from "../components/home/Home.vue";
 import Register from "../components/Register.vue";
 import Login from "../components/Login.vue";
 
