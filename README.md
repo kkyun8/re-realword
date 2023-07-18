@@ -10,6 +10,4 @@ vue2+typescript
 
 ### backend 情報
 
-express+prisma
-
-- backend は endpoints ページに書いている API 順に実装する。（https://realworld-docs.netlify.app/docs/specs/backend-specs/endpoints）
+express+prisma+jest
