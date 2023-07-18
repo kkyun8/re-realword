@@ -4,14 +4,14 @@ const tokenKey = process.env.TOKEN_KEY || "secret";
 const Unauthorized = new Error("Unauthorized");
 Unauthorized.status = 401;
 
-function authorization(req) {
+function authorization(req, isOptional = false) {
   const auth = req.header("Authorization");
   if (!auth) {
-    throw Unauthorized;
+    if (!isOptional) throw Unauthorized;
   } else {
     const [type, token] = auth.split(" ");
     if (type !== "Token") {
-      throw Unauthorized;
+      if (!isOptional) throw Unauthorized;
     }
 
     try {
@@ -20,9 +20,10 @@ function authorization(req) {
 
       return { id, email, token };
     } catch (e) {
-      throw Unauthorized;
+      if (!isOptional) throw Unauthorized;
     }
   }
+  return {};
 }
 
 function createToken(user) {

@@ -19,3 +19,8 @@ model User {
 model Tag {
   name String    @id @unique
 }
+
+model Follow {
+  followerUserId Int @unique
+  followingUserId Int  @unique
+}

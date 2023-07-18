@@ -7,6 +7,7 @@ const cors = require("cors");
 
 const usersRouter = require("./src/routes/users.route");
 const tagsRouter = require("./src/routes/tags.route");
+const profilesRouter = require("./src/routes/profiles.route");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cors());
 
 app.use("/api/users", usersRouter);
 app.use("/api/tags", tagsRouter);
+app.use("/api/profiles", profilesRouter);
 
 //swagger
 const swaggerUi = require("swagger-ui-express");
