@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../components/home/Home.vue";
-import Register from "../components/Register.vue";
 import Login from "../components/Login.vue";
 
 Vue.use(VueRouter);
@@ -15,7 +14,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/register",
     name: "register",
-    component: Register,
+    component: Login,
   },
   {
     path: "/login",
