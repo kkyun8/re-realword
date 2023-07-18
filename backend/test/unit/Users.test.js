@@ -2,6 +2,39 @@ const request = require("supertest");
 const app = require("../../app");
 let token;
 
+jest.unmock("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
+beforeAll(async () => {
+  const testuser1 = await prisma.user.findFirst({
+    where: {
+      email: "test@test.com",
+    },
+  });
+  if (testuser1) {
+    // delete param only where id
+    await prisma.user.delete({
+      where: {
+        id: testuser1.id,
+      },
+    });
+  }
+  const testuser = await prisma.user.findFirst({
+    where: {
+      email: "testemail@test.com",
+    },
+  });
+  if (testuser) {
+    // delete param only where id
+    await prisma.user.delete({
+      where: {
+        id: testuser.id,
+      },
+    });
+  }
+});
+
 describe("会員登録〜ログイン〜ログインユーザー情報取得〜ユーザー情報変更〜変更情報確認", () => {
   test("会員登録", async () => {
     const response = await request(app)
@@ -14,7 +47,7 @@ describe("会員登録〜ログイン〜ログインユーザー情報取得〜�
         },
       });
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(201);
 
     expect(response.body.user).toHaveProperty("token");
     expect(response.body.user).toHaveProperty("bio");
@@ -212,8 +245,22 @@ describe("ログイン・異常系", () => {
       .post("/api/users/login")
       .send({
         user: {
-          email: "empty",
+          email: "empty@empty.com",
           password: "password",
+        },
+      });
+    expect(response.statusCode).toBe(422);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors.body).toBeInstanceOf(Array);
+  });
+
+  test("ログイン・パスワードエラー", async () => {
+    const response = await request(app)
+      .post("/api/users/login")
+      .send({
+        user: {
+          email: "testemail@test.com",
+          password: "1234",
         },
       });
     expect(response.statusCode).toBe(422);

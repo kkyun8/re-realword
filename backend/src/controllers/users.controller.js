@@ -12,8 +12,7 @@ async function login(req, res, next) {
   try {
     // No authentication required, returns a User
     const user = await userService.login(email, password);
-    res.json({ user });
-    res.status(200);
+    res.status(200).json({ user });
     next();
   } catch (e) {
     next(e);
@@ -30,8 +29,7 @@ async function create(req, res, next) {
   try {
     // No authentication required, returns a User
     const user = await userService.create(email, username, password);
-    res.json({ user });
-    res.status(201);
+    res.status(201).json({ user });
     next();
   } catch (e) {
     next(e);
@@ -44,8 +42,7 @@ async function get(req, res, next) {
 
     // Authentication required, returns a User that's the current user
     const user = await userService.get(id, token);
-    res.json({ user });
-    res.status(200);
+    res.status(200).json({ user });
     next();
   } catch (e) {
     next(e);
@@ -73,8 +70,7 @@ async function update(req, res, next) {
       bio,
       token
     );
-    res.json({ user });
-    res.status(200);
+    res.status(200).json({ user });
     next();
   } catch (e) {
     next(e);

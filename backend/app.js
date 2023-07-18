@@ -6,6 +6,7 @@ const logger = require("morgan");
 const cors = require("cors");
 
 const usersRouter = require("./src/routes/users.route");
+const tagsRouter = require("./src/routes/tags.route");
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 app.use("/api/users", usersRouter);
+app.use("/api/tags", tagsRouter);
 
 //swagger
 const swaggerUi = require("swagger-ui-express");
@@ -46,7 +48,6 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   const errors = { body: [err.message] };
   res.json({ errors });
