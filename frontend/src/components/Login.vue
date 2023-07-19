@@ -57,9 +57,6 @@ export default class Login extends Vue {
       this.signUp = true;
     }
   }
-  mounted() {
-    console.log(this.$route.name);
-  }
 }
 </script>
 
