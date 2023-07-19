@@ -33,14 +33,7 @@
             <p>Popular Tags</p>
 
             <div class="tag-list">
-              <a href="" class="tag-pill tag-default">programming</a>
-              <a href="" class="tag-pill tag-default">javascript</a>
-              <a href="" class="tag-pill tag-default">emberjs</a>
-              <a href="" class="tag-pill tag-default">angularjs</a>
-              <a href="" class="tag-pill tag-default">react</a>
-              <a href="" class="tag-pill tag-default">mean</a>
-              <a href="" class="tag-pill tag-default">node</a>
-              <a href="" class="tag-pill tag-default">rails</a>
+              <Tag v-for="(tag, index) in tags" :key="index" :tag="tag" />
             </div>
           </div>
         </div>
@@ -51,21 +44,34 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Article from "./Article.vue";
 import ArticlesStore from "@/store/modules/articles";
+import TagsStore from "@/store/modules/tags";
+import Article from "./Article.vue";
+import Tag from "./Tag.vue";
 
 @Component({
   components: {
     Article,
+    Tag,
   },
 })
 export default class Home extends Vue {
   get articles() {
     return ArticlesStore.articles;
   }
+  get tags() {
+    return TagsStore.tags;
+  }
 
   async created() {
-    await ArticlesStore.fetchArticles();
+    Promise.all([
+      await ArticlesStore.fetchArticles(),
+      await TagsStore.fetchTags(),
+    ]);
+  }
+
+  mounted() {
+    console.log(this.tags);
   }
 }
 </script>

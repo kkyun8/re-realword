@@ -10,7 +10,6 @@ import ArticlesService from "@/service/ArticlesService";
 import store from "../index";
 
 const baseURL = "https://api.realworld.io/api";
-console.log(baseURL);
 const httpClient = new HttpClient(baseURL);
 const articlesService = new ArticlesService(httpClient);
 

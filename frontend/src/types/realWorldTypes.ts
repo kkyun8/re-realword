@@ -27,3 +27,7 @@ export interface ArticlesResponse {
   articles: Article[];
   articlesCount: number;
 }
+
+export interface Tags {
+  tags: string[] | null;
+}
