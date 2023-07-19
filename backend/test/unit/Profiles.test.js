@@ -7,7 +7,7 @@ jest.unmock("@prisma/client");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-describe("会員登録〜ログイン〜Profile取得〜follow〜un follow", () => {
+describe("会員登録〜ログイン〜Profile取得〜follow〜unfollow", () => {
   let token;
 
   beforeAll(async () => {
@@ -90,6 +90,38 @@ describe("会員登録〜ログイン〜Profile取得〜follow〜un follow", () 
   test("Profile取得", async () => {
     const response = await request(app)
       .get(`/api/profiles/testusername`)
+      .set("Authorization", `Token ${token}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.profile).toHaveProperty("username");
+    expect(response.body.profile).toHaveProperty("bio");
+    expect(response.body.profile).toHaveProperty("image");
+    expect(response.body.profile).toHaveProperty("following");
+
+    expect(response.body.profile.username).toBe("testusername");
+    expect(response.body.profile.bio).toBe("");
+    expect(response.body.profile.image).toBe("");
+    expect(response.body.profile.following).toBe(false);
+  });
+
+  test("Follow", async () => {
+    const response = await request(app)
+      .post(`/api/profiles/testusername/follow`)
+      .set("Authorization", `Token ${token}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.profile).toHaveProperty("username");
+    expect(response.body.profile).toHaveProperty("bio");
+    expect(response.body.profile).toHaveProperty("image");
+    expect(response.body.profile).toHaveProperty("following");
+
+    expect(response.body.profile.username).toBe("testusername");
+    expect(response.body.profile.bio).toBe("");
+    expect(response.body.profile.image).toBe("");
+    expect(response.body.profile.following).toBe(true);
+  });
+
+  test("UnFollow", async () => {
+    const response = await request(app)
+      .delete(`/api/profiles/testusername/follow`)
       .set("Authorization", `Token ${token}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.profile).toHaveProperty("username");
