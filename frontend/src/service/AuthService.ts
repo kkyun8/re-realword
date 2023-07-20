@@ -15,7 +15,7 @@ export default class AuthService {
     email: string,
     password: string
   ): Promise<User> {
-    const data: User = await this.http.fetch("/user", {
+    const data: User = await this.http.fetch("/users", {
       method: "post",
       data: { username, email, password },
     });
@@ -25,7 +25,7 @@ export default class AuthService {
   }
 
   async login(email: string, password: string): Promise<User> {
-    const data: User = await this.http.fetch("/user/login", {
+    const data: User = await this.http.fetch("/users/login", {
       method: "post",
       data: { email, password },
     });
