@@ -22,7 +22,7 @@ jobs:
         run: |
           cd backend
           npm install
-          npx prisma migrate dev
+          npx prisma migrate deploy 
           npm run test:coverage
 
       - name: lcov-reporter
