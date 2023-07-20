@@ -14,7 +14,7 @@
             <li>That email is already taken</li>
           </ul>
 
-          <form>
+          <form method="post" @submit.prevent="userSignIn">
             <fieldset v-if="signUp" class="form-group">
               <input
                 v-model="username"
@@ -39,10 +39,7 @@
                 placeholder="Password"
               />
             </fieldset>
-            <button
-              class="btn btn-lg btn-primary pull-xs-right"
-              @click="signUp ? userSignUp : userSignIn"
-            >
+            <button class="btn btn-lg btn-primary pull-xs-right" type="submit">
               {{ signUp ? "Sign up" : "Sign in" }}
             </button>
           </form>
