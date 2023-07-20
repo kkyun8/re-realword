@@ -9,7 +9,9 @@ async function get(username, loginUserId) {
   });
 
   if (!profile) {
-    throw new Error("Profile not found");
+    const error = new Error("Profile not found");
+    error.status = 422;
+    throw error;
   }
 
   let following = false;
@@ -39,7 +41,9 @@ async function followPost(username, loginUserId) {
   });
 
   if (!profile) {
-    throw new Error("Profile not found");
+    const error = new Error("Profile not found");
+    error.status = 422;
+    throw error;
   }
 
   const follow = await prisma.follow.findFirst({
@@ -50,7 +54,9 @@ async function followPost(username, loginUserId) {
   });
 
   if (follow) {
-    throw new Error("Already following");
+    const error = new Error("Already following");
+    error.status = 422;
+    throw error;
   }
 
   await prisma.follow.create({
@@ -71,7 +77,9 @@ async function followDelete(username, loginUserId) {
   });
 
   if (!profile) {
-    throw new Error("Profile not found");
+    const error = new Error("Profile not found");
+    error.status = 422;
+    throw error;
   }
 
   const following = await prisma.follow.findUnique({

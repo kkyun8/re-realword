@@ -7,11 +7,14 @@ Unauthorized.status = 401;
 function authorization(req, isOptional = false) {
   const auth = req.header("Authorization");
   if (!auth) {
-    if (!isOptional) throw Unauthorized;
+    if (isOptional) {
+      return {};
+    }
+    throw Unauthorized;
   } else {
     const [type, token] = auth.split(" ");
     if (type !== "Token") {
-      if (!isOptional) throw Unauthorized;
+      throw Unauthorized;
     }
 
     try {
@@ -20,7 +23,7 @@ function authorization(req, isOptional = false) {
 
       return { id, email, token };
     } catch (e) {
-      if (!isOptional) throw Unauthorized;
+      throw Unauthorized;
     }
   }
   return {};
