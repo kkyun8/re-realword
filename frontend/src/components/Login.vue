@@ -17,6 +17,7 @@
           <form>
             <fieldset v-if="signUp" class="form-group">
               <input
+                v-model="username"
                 class="form-control form-control-lg"
                 type="text"
                 placeholder="Your Name"
@@ -24,6 +25,7 @@
             </fieldset>
             <fieldset class="form-group">
               <input
+                v-model="email"
                 class="form-control form-control-lg"
                 type="text"
                 placeholder="Email"
@@ -31,12 +33,16 @@
             </fieldset>
             <fieldset class="form-group">
               <input
+                v-model="password"
                 class="form-control form-control-lg"
                 type="password"
                 placeholder="Password"
               />
             </fieldset>
-            <button class="btn btn-lg btn-primary pull-xs-right">
+            <button
+              class="btn btn-lg btn-primary pull-xs-right"
+              @click="signUp ? userSignUp : userSignIn"
+            >
               {{ signUp ? "Sign up" : "Sign in" }}
             </button>
           </form>
@@ -48,14 +54,27 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import AuthStore from "@/store/modules/auth";
 
 @Component
 export default class Login extends Vue {
   signUp: boolean = false;
+  username: string = "";
+  email: string = "";
+  password: string = "";
+
   created() {
     if (this.$route.name === "register") {
       this.signUp = true;
     }
+  }
+
+  async userSignUp() {
+    await AuthStore.postSignup(this.username, this.email, this.password);
+  }
+
+  async userSignIn() {
+    await AuthStore.postSignin(this.email, this.password);
   }
 }
 </script>
