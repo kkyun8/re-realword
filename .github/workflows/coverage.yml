@@ -1,5 +1,7 @@
 on: ["push", "pull_request"]
 
+permissions: write-all
+
 name: backend coverage
 
 jobs:
