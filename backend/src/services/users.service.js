@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const { createToken } = require("../middleware/auth");
+const { createError } = require("../middleware/error");
 const bcrypt = require("bcrypt");
 const saltRounds = process.env.SALT_ROUNDS || 10;
 const prisma = new PrismaClient();
@@ -14,18 +15,14 @@ async function login(email, password) {
   if (user) {
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      const error = new Error("password is incorrect");
-      error.status = 422;
-      throw error;
+      throw createError("password is incorrect");
     }
     const { email, username, bio, image } = user;
     const token = createToken(user);
 
     return { email, token, username, bio, image };
   } else {
-    const error = new Error("User not found");
-    error.status = 422;
-    throw error;
+    throw createError("User not found");
   }
 }
 
@@ -35,9 +32,7 @@ async function create(email, username, password) {
 
   const findUser = await prisma.user.findUnique({ where: { email } });
   if (findUser) {
-    const error = new Error("Email already exists");
-    error.status = 422;
-    throw error;
+    throw createError("Email already exists");
   }
 
   const user = await prisma.user.create({
