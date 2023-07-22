@@ -69,10 +69,6 @@ export default class Home extends Vue {
       await TagsStore.fetchTags(),
     ]);
   }
-
-  mounted() {
-    console.log(this.tags);
-  }
 }
 </script>
 

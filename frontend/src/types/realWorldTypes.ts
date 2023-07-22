@@ -31,3 +31,18 @@ export interface ArticlesResponse {
 export interface Tags {
   tags: string[] | null;
 }
+
+export interface User {
+  user: {
+    email: string;
+    token: string;
+    username: string;
+    bio: string;
+    image: string;
+  };
+}
+
+export interface SigninReqest {
+  email: string;
+  password: string;
+}
