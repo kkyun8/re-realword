@@ -41,3 +41,8 @@ export interface User {
     image: string;
   };
 }
+
+export interface SigninReqest {
+  email: string;
+  password: string;
+}
