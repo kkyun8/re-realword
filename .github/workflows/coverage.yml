@@ -1,5 +1,7 @@
 on: ["push", "pull_request"]
 
+permissions: write-all
+
 name: backend coverage
 
 jobs:
@@ -16,16 +18,17 @@ jobs:
 
       - name: openssl
         run: |
-          apt-get update -y && apt-get install -y openssl
+          sudo apt-get update -y && sudo apt-get install -y openssl
 
       - name: npm install, test:coverage
         run: |
           cd backend
           npm install
-          npx prisma migrate dev
+          npx prisma migrate deploy 
           npm run test:coverage
 
       - name: lcov-reporter
-        uses: romeovs/lcov-reporter-action@v0.2.16
+        uses: romeovs/lcov-reporter-action@v0.2.19
         with:
           lcov-file: ./backend/coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
