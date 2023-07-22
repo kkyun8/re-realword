@@ -14,8 +14,8 @@
             <li>That email is already taken</li>
           </ul>
 
-          <form method="post" @submit.prevent="userSignIn">
-            <fieldset v-if="signUp" class="form-group">
+          <form>
+            <fieldset v-show="signUp" class="form-group">
               <input
                 v-model="username"
                 class="form-control form-control-lg"
@@ -33,14 +33,27 @@
             </fieldset>
             <fieldset class="form-group">
               <input
-                v-model="password"
                 class="form-control form-control-lg"
                 type="password"
+                v-model="password"
                 placeholder="Password"
               />
             </fieldset>
-            <button class="btn btn-lg btn-primary pull-xs-right" type="submit">
-              {{ signUp ? "Sign up" : "Sign in" }}
+            <button
+              v-if="signUp"
+              type="button"
+              class="btn btn-lg btn-primary pull-xs-right"
+              @click="userSignUp"
+            >
+              Sign up
+            </button>
+            <button
+              v-else
+              type="button"
+              class="btn btn-lg btn-primary pull-xs-right"
+              @click="userSignIn"
+            >
+              Sign in
             </button>
           </form>
         </div>
@@ -71,7 +84,7 @@ export default class Login extends Vue {
   }
 
   async userSignIn() {
-    await AuthStore.postSignin(this.email, this.password);
+    await AuthStore.postSignin({ email: this.email, password: this.password });
   }
 }
 </script>

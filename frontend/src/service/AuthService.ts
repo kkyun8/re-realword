@@ -1,6 +1,6 @@
 import HttpClient from "@/network/http";
 import TokenStorage from "@/db/token";
-import { User } from "@/types/realWorldTypes";
+import { SigninReqest, User } from "@/types/realWorldTypes";
 
 export default class AuthService {
   private http: HttpClient;
@@ -24,10 +24,10 @@ export default class AuthService {
     return data;
   }
 
-  async login(email: string, password: string): Promise<User> {
+  async login(user: { user: SigninReqest }): Promise<User> {
     const data: User = await this.http.fetch("/users/login", {
       method: "post",
-      data: { email, password },
+      data: JSON.stringify(user),
     });
     // token save
     this.tokenStorage.saveToken(data.user.token);

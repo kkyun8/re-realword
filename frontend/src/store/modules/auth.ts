@@ -1,4 +1,4 @@
-import { User } from "@/types/realWorldTypes";
+import { SigninReqest, User } from "@/types/realWorldTypes";
 import {
   Module,
   VuexModule,
@@ -10,7 +10,7 @@ import AuthService from "@/service/AuthService";
 import TokenStorage from "@/db/token";
 import store from "../index";
 
-const baseURL = "https://api.realworld.io/api";
+const baseURL = "http://localhost:3000/api";
 const httpClient = new HttpClient(baseURL);
 const tokenStorage = new TokenStorage();
 const authService = new AuthService(httpClient, tokenStorage);
@@ -35,10 +35,13 @@ class AuthStore extends VuexModule {
   }
 
   @MutationAction
-  async postSignin(email: string, password: string) {
-    const user: User = await authService.login(email, password);
+  async postSignin(user: SigninReqest) {
+    const editedData = {
+      user: user,
+    };
+    const userData: User = await authService.login(editedData);
     return {
-      user: user.user,
+      user: userData.user,
     };
   }
 }
