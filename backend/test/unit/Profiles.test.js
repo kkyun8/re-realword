@@ -134,4 +134,114 @@ describe("会員登録〜ログイン〜Profile取得〜follow〜unfollow", () =
     expect(response.body.profile.image).toBe("");
     expect(response.body.profile.following).toBe(false);
   });
+
+  test("Profile取得・ユーザーなし", async () => {
+    const response = await request(app)
+      .get(`/api/profiles/none`)
+      .set("Authorization", `Token ${token}`);
+    expect(response.statusCode).toBe(422);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("Profile取得・トークンなし", async () => {
+    const response = await request(app).get(`/api/profiles/testusername`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.profile).toHaveProperty("username");
+    expect(response.body.profile).toHaveProperty("bio");
+    expect(response.body.profile).toHaveProperty("image");
+    expect(response.body.profile).toHaveProperty("following");
+
+    expect(response.body.profile.username).toBe("testusername");
+    expect(response.body.profile.bio).toBe("");
+    expect(response.body.profile.image).toBe("");
+    expect(response.body.profile.following).toBe(false);
+  });
+
+  test("Profile取得・トークン認証失敗", async () => {
+    const response = await request(app)
+      .get(`/api/profiles/testusername`)
+      .set("Authorization", `Token token`);
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("Follow・トークンなし", async () => {
+    const response = await request(app).post(
+      `/api/profiles/testusername/follow`
+    );
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("Follow・トークン認証失敗", async () => {
+    const response = await request(app)
+      .post(`/api/profiles/testusername/follow`)
+      .set("Authorization", `Token token`);
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("Follow・存在しないユーザ", async () => {
+    const response = await request(app)
+      .post(`/api/profiles/nonw/follow`)
+      .set("Authorization", `Token ${token}`);
+    expect(response.statusCode).toBe(422);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("Follow・Follow済みユーザ", async () => {
+    const follow = await request(app)
+      .post(`/api/profiles/testusername/follow`)
+      .set("Authorization", `Token ${token}`);
+
+    const response = await request(app)
+      .post(`/api/profiles/testusername/follow`)
+      .set("Authorization", `Token ${token}`);
+    expect(response.statusCode).toBe(422);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("UnFollow・トークンなし", async () => {
+    const response = await request(app).delete(
+      `/api/profiles/testusername/follow`
+    );
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("UnFollow・トークン認証失敗", async () => {
+    const response = await request(app)
+      .delete(`/api/profiles/testusername/follow`)
+      .set("Authorization", `Token token`);
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("UnFollow・存在しないユーザ", async () => {
+    const response = await request(app)
+      .delete(`/api/profiles/none/follow`)
+      .set("Authorization", `Token ${token}`);
+    expect(response.statusCode).toBe(422);
+    expect(response.body).toHaveProperty("errors");
+  });
+
+  test("UnFollow・UnFollow済みユーザ・正常系", async () => {
+    const follow = await request(app)
+      .delete(`/api/profiles/testusername/follow`)
+      .set("Authorization", `Token ${token}`);
+
+    const response = await request(app)
+      .delete(`/api/profiles/testusername/follow`)
+      .set("Authorization", `Token ${token}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.profile).toHaveProperty("username");
+    expect(response.body.profile).toHaveProperty("bio");
+    expect(response.body.profile).toHaveProperty("image");
+    expect(response.body.profile).toHaveProperty("following");
+
+    expect(response.body.profile.username).toBe("testusername");
+    expect(response.body.profile.bio).toBe("");
+    expect(response.body.profile.image).toBe("");
+    expect(response.body.profile.following).toBe(false);
+  });
 });

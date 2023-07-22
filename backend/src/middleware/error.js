@@ -13,6 +13,13 @@ function createValidationResult(req, res, next) {
   return { errorJson, hasErrors };
 }
 
+function createError(message, status = 422) {
+  const error = new Error(message);
+  error.status = status;
+  return error;
+}
+
 module.exports = {
   createValidationResult,
+  createError,
 };

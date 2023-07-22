@@ -1,3 +1,4 @@
+const { createError } = require("../middleware/error");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
@@ -9,7 +10,7 @@ async function get(username, loginUserId) {
   });
 
   if (!profile) {
-    throw new Error("Profile not found");
+    throw createError("Profile not found");
   }
 
   let following = false;
@@ -39,7 +40,7 @@ async function followPost(username, loginUserId) {
   });
 
   if (!profile) {
-    throw new Error("Profile not found");
+    throw createError("Profile not found");
   }
 
   const follow = await prisma.follow.findFirst({
@@ -50,7 +51,7 @@ async function followPost(username, loginUserId) {
   });
 
   if (follow) {
-    throw new Error("Already following");
+    throw createError("Already following");
   }
 
   await prisma.follow.create({
@@ -71,7 +72,7 @@ async function followDelete(username, loginUserId) {
   });
 
   if (!profile) {
-    throw new Error("Profile not found");
+    throw createError("Profile not found");
   }
 
   const following = await prisma.follow.findUnique({
