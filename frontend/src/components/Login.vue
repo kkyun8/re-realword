@@ -15,8 +15,9 @@
           </ul>
 
           <form>
-            <fieldset v-if="signUp" class="form-group">
+            <fieldset v-show="signUp" class="form-group">
               <input
+                v-model="username"
                 class="form-control form-control-lg"
                 type="text"
                 placeholder="Your Name"
@@ -24,6 +25,7 @@
             </fieldset>
             <fieldset class="form-group">
               <input
+                v-model="email"
                 class="form-control form-control-lg"
                 type="text"
                 placeholder="Email"
@@ -33,11 +35,25 @@
               <input
                 class="form-control form-control-lg"
                 type="password"
+                v-model="password"
                 placeholder="Password"
               />
             </fieldset>
-            <button class="btn btn-lg btn-primary pull-xs-right">
-              {{ signUp ? "Sign up" : "Sign in" }}
+            <button
+              v-if="signUp"
+              type="button"
+              class="btn btn-lg btn-primary pull-xs-right"
+              @click="userSignUp"
+            >
+              Sign up
+            </button>
+            <button
+              v-else
+              type="button"
+              class="btn btn-lg btn-primary pull-xs-right"
+              @click="userSignIn"
+            >
+              Sign in
             </button>
           </form>
         </div>
@@ -48,14 +64,27 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import AuthStore from "@/store/modules/auth";
 
 @Component
 export default class Login extends Vue {
   signUp: boolean = false;
+  username: string = "";
+  email: string = "";
+  password: string = "";
+
   created() {
     if (this.$route.name === "register") {
       this.signUp = true;
     }
+  }
+
+  async userSignUp() {
+    await AuthStore.postSignup(this.username, this.email, this.password);
+  }
+
+  async userSignIn() {
+    await AuthStore.postSignin({ email: this.email, password: this.password });
   }
 }
 </script>
