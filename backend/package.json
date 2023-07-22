@@ -7,8 +7,8 @@
     "devstart": "nodemon ./bin/www",
     "db:clean": "npx prisma migrate reset",
     "db:seed": "node ./prisma/seed.js",
-    "test:unit": "jest --watchAll --verbose",
-    "test:coverage": "jest --coverage --verbose"
+    "test:unit": "jest --runInBand --watchAll --verbose",
+    "test:coverage": "jest --runInBand --coverage --verbose"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",
@@ -33,5 +33,12 @@
     "supertest": "^6.3.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageReporters": [
+      "json",
+      "html"
+    ]
   }
 }
