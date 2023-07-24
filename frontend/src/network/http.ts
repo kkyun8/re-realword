@@ -23,8 +23,7 @@ export default class HttpClient {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message || "Something went wrong!";
+        const message = error.response?.data?.errors.body[0];
         throw new Error(message);
       } else {
         console.error(error);
