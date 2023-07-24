@@ -11,7 +11,8 @@ export default class ArticlesService {
     return await this.http.fetch("/articles", {
       method: "get",
       params: {
-        limit: 5,
+        limit: 10,
+        offset: 0,
       },
     });
   }
