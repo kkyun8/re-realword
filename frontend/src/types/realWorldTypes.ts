@@ -46,3 +46,9 @@ export interface SigninReqest {
   email: string;
   password: string;
 }
+
+export interface SignupReqest {
+  username: string;
+  email: string;
+  password: string;
+}

@@ -1,4 +1,4 @@
-import { SigninReqest, User } from "@/types/realWorldTypes";
+import { SigninReqest, SignupReqest, User } from "@/types/realWorldTypes";
 import {
   Module,
   VuexModule,
@@ -27,22 +27,43 @@ class AuthStore extends VuexModule {
   };
 
   @MutationAction
-  async postSignup(username: string, email: string, password: string) {
-    const user: User = await authService.signup(username, email, password);
+  async postSignup(user: SignupReqest) {
+    const userData: User = await authService.signup(user);
     return {
-      user: user.user,
+      user: userData.user,
+      isAuthenticated: true,
     };
   }
 
   @MutationAction
   async postSignin(user: SigninReqest) {
-    const editedData = {
-      user: user,
+    const userData: User = await authService.login(user);
+    return {
+      user: userData.user,
+      isAuthenticated: true,
     };
-    const userData: User = await authService.login(editedData);
+  }
+
+  @MutationAction
+  async getUSer() {
+    const userData: User = await authService.getUser();
     return {
       user: userData.user,
     };
+  }
+
+  @MutationAction
+  async checkAuthStatus() {
+    const token = tokenStorage.getToken();
+    if (token) {
+      return {
+        isAuthenticated: true,
+      };
+    } else {
+      return {
+        isAuthenticated: false,
+      };
+    }
   }
 }
 
