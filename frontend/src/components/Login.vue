@@ -10,8 +10,8 @@
             }}</a>
           </p>
 
-          <ul class="error-messages">
-            <li>That email is already taken</li>
+          <ul v-show="errorMessages" class="error-messages">
+            <li>{{ errorMessages }}</li>
           </ul>
 
           <form>
@@ -72,6 +72,7 @@ export default class Login extends Vue {
   username: string = "";
   email: string = "";
   password: string = "";
+  // errorMessages: string | null = null;
 
   created() {
     if (this.$route.name === "register") {
@@ -79,12 +80,29 @@ export default class Login extends Vue {
     }
   }
 
+  get errorMessages() {
+    return AuthStore.errorMessages;
+  }
+
   async userSignUp() {
-    await AuthStore.postSignup(this.username, this.email, this.password);
+    const user = await AuthStore.postSignup({
+      username: this.username,
+      email: this.email,
+      password: this.password,
+    });
+    if (user) {
+      this.$router.push({ name: "home" });
+    }
   }
 
   async userSignIn() {
-    await AuthStore.postSignin({ email: this.email, password: this.password });
+    const user = await AuthStore.postSignin({
+      email: this.email,
+      password: this.password,
+    });
+    if (user) {
+      this.$router.push({ name: "home" });
+    }
   }
 }
 </script>

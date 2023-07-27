@@ -1,6 +1,6 @@
 import HttpClient from "@/network/http";
 import TokenStorage from "@/db/token";
-import { SigninReqest, User } from "@/types/realWorldTypes";
+import { SigninReqest, SignupReqest, User } from "@/types/realWorldTypes";
 
 export default class AuthService {
   private http: HttpClient;
@@ -10,27 +10,38 @@ export default class AuthService {
     this.tokenStorage = tokenStorage;
   }
 
-  async signup(
-    username: string,
-    email: string,
-    password: string
-  ): Promise<User> {
+  async signup(user: SignupReqest): Promise<User> {
+    const editedData = {
+      user: user,
+    };
     const data: User = await this.http.fetch("/users", {
       method: "post",
-      data: { username, email, password },
+      data: JSON.stringify(editedData),
     });
     // token save
     this.tokenStorage.saveToken(data.user.token);
     return data;
   }
 
-  async login(user: { user: SigninReqest }): Promise<User> {
+  async login(user: SigninReqest): Promise<User> {
+    const editedData = {
+      user: user,
+    };
     const data: User = await this.http.fetch("/users/login", {
       method: "post",
-      data: JSON.stringify(user),
+      data: JSON.stringify(editedData),
     });
     // token save
     this.tokenStorage.saveToken(data.user.token);
+    return data;
+  }
+
+  async getUser(): Promise<User> {
+    const token = this.tokenStorage.getToken();
+    const data: User = await this.http.fetch("/users", {
+      method: "get",
+      headers: { Authorization: `Token ${token}` },
+    });
     return data;
   }
 }

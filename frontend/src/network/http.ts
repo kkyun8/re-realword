@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { dispatchError } from "@/util/customError";
 
 export default class HttpClient {
   constructor(private baseURL: string) {
@@ -23,9 +24,12 @@ export default class HttpClient {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message || "Something went wrong!";
-        throw new Error(message);
+        const status = error.response?.status;
+        // const message = error.response?.data?.errors.body[0];
+        if (status) {
+          dispatchError(status);
+        }
+        throw new Error("someting wrong!!");
       } else {
         console.error(error);
         throw new Error("Network error occurred.");

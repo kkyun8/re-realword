@@ -12,7 +12,7 @@
         <div class="col-md-9">
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
-              <li class="nav-item">
+              <li v-show="isAuth" class="nav-item">
                 <a class="nav-link disabled" href="">Your Feed</a>
               </li>
               <li class="nav-item">
@@ -46,6 +46,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import ArticlesStore from "@/store/modules/articles";
 import TagsStore from "@/store/modules/tags";
+import AuthStore from "@/store/modules/auth";
 import Article from "./Article.vue";
 import Tag from "./Tag.vue";
 
@@ -56,6 +57,10 @@ import Tag from "./Tag.vue";
   },
 })
 export default class Home extends Vue {
+  get isAuth() {
+    return AuthStore.isAuthenticated;
+  }
+
   get articles() {
     return ArticlesStore.articles;
   }
@@ -67,7 +72,11 @@ export default class Home extends Vue {
     Promise.all([
       await ArticlesStore.fetchArticles(),
       await TagsStore.fetchTags(),
+      await AuthStore.checkAuthStatus(),
     ]);
+    if (this.isAuth) {
+      await AuthStore.getUSer();
+    }
   }
 }
 </script>
