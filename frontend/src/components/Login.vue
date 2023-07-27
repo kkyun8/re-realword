@@ -72,7 +72,7 @@ export default class Login extends Vue {
   username: string = "";
   email: string = "";
   password: string = "";
-  errorMessages: string | null = null;
+  // errorMessages: string | null = null;
 
   created() {
     if (this.$route.name === "register") {
@@ -80,32 +80,28 @@ export default class Login extends Vue {
     }
   }
 
+  get errorMessages() {
+    return AuthStore.errorMessages;
+  }
+
   async userSignUp() {
-    try {
-      await AuthStore.postSignup({
-        username: this.username,
-        email: this.email,
-        password: this.password,
-      });
+    const user = await AuthStore.postSignup({
+      username: this.username,
+      email: this.email,
+      password: this.password,
+    });
+    if (user) {
       this.$router.push({ name: "home" });
-    } catch (error) {
-      if (error instanceof Error) {
-        this.errorMessages = error.message;
-      }
     }
   }
 
   async userSignIn() {
-    try {
-      await AuthStore.postSignin({
-        email: this.email,
-        password: this.password,
-      });
+    const user = await AuthStore.postSignin({
+      email: this.email,
+      password: this.password,
+    });
+    if (user) {
       this.$router.push({ name: "home" });
-    } catch (error) {
-      if (error instanceof Error) {
-        this.errorMessages = error.message;
-      }
     }
   }
 }
